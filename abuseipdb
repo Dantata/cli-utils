@@ -1,7 +1,8 @@
 #!/bin/bash
 
+source .abuseipdb.config
 IPADDR=$1
-API=xxx
+#API=xxx
 
 if [[ -z "$1" ]]; then
     echo -e "Check the abuse confidence score of an IPADDR at abuseipdb.com.\n"
