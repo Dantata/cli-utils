@@ -1,0 +1,40 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then
+		echo "usage: dns <domain>"
+		exit 1
+fi
+domain=${1#http://}
+domain=${domain#https://}
+domain=${domain#www.}
+echo "DNS check for $domain:"
+
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+echo -e ${bold}"\nNS records:"${normal}
+dig +noall +answer ns $domain
+#echo "---"
+
+echo -e ${bold}"\nA records:"${normal}
+dig +noall +answer a $domain www.$domain
+#echo "---"
+
+echo -e ${bold}"\nMX records:"${normal}
+dig +noall +answer mx $domain
+echo -e "---"
+
+# fix this with getopts 
+#if [ $2 == "--short" ]; then
+#        exit 1
+#fi
+
+for f in $(dig +short mx $domain | awk {'print $2'}); do 
+	dig +noall +answer $f;
+	done
+#echo "---"
+
+echo -e ${bold}"\nTXT records:"${normal}
+dig +noall +answer txt $domain
+
+echo -e ${bold}"\nDKIM (dkim._domainkey.$domain) record:"${normal}
+dig +noall +answer txt dkim._domainkey.$domain
