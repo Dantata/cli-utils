@@ -1,0 +1,3 @@
+#!/bin/sh
+. .ip.config
+curl -s "https://ipinfo.io/$1?token=$token" | jq -r '"hostname:\t \(.hostname) \ncountry:\t \(.country)\ncity:\t\t \(.city)\norg:\t\t \(.org)"'
