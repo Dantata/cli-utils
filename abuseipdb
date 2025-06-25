@@ -1,0 +1,25 @@
+#!/bin/bash
+
+IPADDR=$1
+API=xxx
+
+if [[ -z "$1" ]]; then
+    echo -e "Check the abuse confidence score of an IPADDR at abuseipdb.com.\n"
+    echo -e "Usage: $0 <IPADDR>  [-all]\n\nArguments:\n  -all show full details.\n\nExample:\n  $0 127.0.0.1 -all"
+    exit 1
+fi
+
+curl -s -G https://api.abuseipdb.com/api/v2/check \
+  --data-urlencode "ipAddress=$IPADDR" \
+  -d maxAgeInDays=90 \
+  -H "Key: $API" \
+  -H "Accept: application/json" \
+| # Check for the "--all" flag
+if [[ "$2" == "--all" ]]; then
+	# Show all information
+	jq '{abuseConfidenceScore: .data.abuseConfidenceScore} + .data'  
+else
+	# Show only abuseConfidenceScore
+	jq '.data.abuseConfidenceScore' 
+	#jq -r '"\"abuseConfidenceScore\": \(.data.abuseConfidenceScore)"'     
+fi
